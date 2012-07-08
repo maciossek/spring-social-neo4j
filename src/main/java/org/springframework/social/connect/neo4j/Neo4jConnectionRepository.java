@@ -2,37 +2,60 @@ package org.springframework.social.connect.neo4j;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.ConnectionKey;
 import org.springframework.social.connect.ConnectionRepository;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 public class Neo4jConnectionRepository implements ConnectionRepository {
 
 	private final String userId;
 
-	private final ConnectionService connService;
+	private final GraphDatabaseService graphDatabaseService;
 
 	private final ConnectionFactoryLocator connectionFactoryLocator;
 
 	private final TextEncryptor textEncryptor;
-
-	public Neo4jConnectionRepository(String userId, ConnectionService connectionService,
+	protected static Logger log = Logger.getLogger("controller");
+	
+	public Neo4jConnectionRepository(String userId, GraphDatabaseService graphDatabaseService,
 			ConnectionFactoryLocator connectionFactoryLocator, TextEncryptor textEncryptor) {
 		this.userId = userId;
-		this.connService = connectionService;
+		this.graphDatabaseService = graphDatabaseService;
 		this.connectionFactoryLocator = connectionFactoryLocator;
 		this.textEncryptor = textEncryptor;
-		//this.connectionMapper = new ConnectionMapper(connectionFactoryLocator, textEncryptor);
 		
 	}
 
 	@Override
 	public MultiValueMap<String, Connection<?>> findAllConnections() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		MultiValueMap<String, Connection<?>> connections = new LinkedMultiValueMap<String, Connection<?>>();
+		Transaction tx = graphDatabaseService.beginTx();
+		try
+		{
+			Node refNode = graphDatabaseService.getReferenceNode();
+		    tx.success();
+		}
+		finally
+		{
+		    tx.finish();
+		}
+		
+		ExecutionEngine engine = new ExecutionEngine( graphDatabaseService );
+		ExecutionResult result = engine.execute( "start n=node(1) return n, n.password" );
+		log.debug("\n" + result);
+		
+		return connections;
 	}
 
 	@Override
