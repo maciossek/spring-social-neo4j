@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -22,6 +23,7 @@ import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.ConnectionKey;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.connect.DuplicateConnectionException;
+import org.springframework.social.connect.support.OAuth1Connection;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -33,8 +35,6 @@ public class Neo4jConnectionRepository implements ConnectionRepository {
 
 	private final ExecutionEngine engine;
 
-	private final IndexManager index;
-
 	private final ConnectionFactoryLocator connectionFactoryLocator;
 
 	private final TextEncryptor textEncryptor;
@@ -45,7 +45,6 @@ public class Neo4jConnectionRepository implements ConnectionRepository {
 		this.userId = userId;
 		this.graphDb = graphDatabaseService;
 		this.engine = new ExecutionEngine(graphDb);
-		this.index = graphDb.index();
 		this.connectionFactoryLocator = connectionFactoryLocator;
 		this.textEncryptor = textEncryptor;
 
@@ -143,18 +142,10 @@ public class Neo4jConnectionRepository implements ConnectionRepository {
 	@Override
 	public void addConnection(Connection<?> connection) {
 		try {
-			// Map<String, Object> props = mapUserConnection(connection);
-			// Map<String, Object> params = new HashMap<String, Object>();
-			// // params.put( "userId", userId);
-			// params.put("props", props);
-			// String query = "START user=node:User(username='" + userId + "') "
-			// + "CREATE ({props})-[:HAS_SOCIAL_CONNECTION]->user";
-			// ExecutionResult result = engine.execute(query, params);
-
 			String query = "START user=node:User(username={userId}) "
-					+ "CREATE (userconnection {__type__:'{__type__}', providerId:'{providerId}',providerUserId:'{providerUserId}', "
-					+ "displayName:'{displayName}', profileUrl:'{profileUrl}', imageUrl:'{imageUrl}', accessToken:'{accessToken}', "
-					+ "secret:'{secret}', refreshToken:'{refreshToken}', expireTime:'{expireTime}'		})-[:xHAS_SOCIAL_CONNECTION]->user ";
+					+ "CREATE (userconnection {providerId:{providerId},providerUserId:{providerUserId}, "
+					+ "displayName:{displayName}, profileUrl:{profileUrl}, imageUrl:{imageUrl}, accessToken:{accessToken}, "
+					+ "secret:{secret}, refreshToken:{refreshToken}, expireTime:{expireTime}})-[:xHAS_SOCIAL_CONNECTION]->user ";
 					//+ "RETURN connection";
 			ExecutionResult result = engine.execute(query, mapUserConnection(connection));
 			log.debug(result);
@@ -192,15 +183,12 @@ public class Neo4jConnectionRepository implements ConnectionRepository {
 
 	private HashMap<String, Object> mapUserConnection(Connection<?> connection) {
 		ConnectionData data = connection.createData();
-
-		// TODO: Rank!?
-
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("__type__", "org.springframework.social.connect.neo4j.UserConnection");
+		
+		
 		params.put("userId", userId);
 		params.put("providerId", data.getProviderId());
 		params.put("providerUserId", data.getProviderUserId());
-		// params.put("rank", rank);
 		params.put("displayName", data.getDisplayName());
 		params.put("profileUrl", data.getProfileUrl());
 		params.put("imageUrl", data.getImageUrl());
@@ -208,12 +196,14 @@ public class Neo4jConnectionRepository implements ConnectionRepository {
 		params.put("secret", encrypt(data.getSecret()));
 		params.put("refreshToken", encrypt(data.getRefreshToken()));
 		params.put("expireTime", data.getExpireTime());
-		log.debug(encrypt(data.getRefreshToken()));
-		log.debug(encrypt(data.getSecret()));
-		log.debug(encrypt(data.getAccessToken()));
-		log.debug(data.getExpireTime());
-		log.debug(data.getImageUrl());
-		log.debug(data.getProfileUrl());
+		
+		
+		// remove null entries, to work with Neo4j
+		for(Entry<String, Object> entry : params.entrySet()){
+			if(entry.getValue() == null){
+				entry.setValue("");
+			}
+		}
 
 		return (HashMap<String, Object>) params;
 	}
