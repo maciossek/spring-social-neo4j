@@ -16,34 +16,12 @@ public class Neo4jUserConnectionRepository implements UsersConnectionRepository 
 
     private ConnectionSignUp connectionSignUp;
 
-    private String tablePrefix = "";
 
     public Neo4jUserConnectionRepository(SocialUserConnectionRepository socialUserConnectionRepository, ConnectionFactoryLocator connectionFactoryLocator) {
 
         this.repository = socialUserConnectionRepository;
         this.connectionFactoryLocator = connectionFactoryLocator;
     }
-
-    /**
-     * The command to execute to create a new local user profile in the event no user id could be mapped to a connection.
-     * Allows for implicitly creating a user profile from connection data during a provider sign-in attempt.
-     * Defaults to null, indicating explicit sign-up will be required to complete the provider sign-in attempt.
-     * @param connectionSignUp a {@link ConnectionSignUp} object
-     * @see #findUserIdsWithConnection(Connection)
-     */
-    public void setConnectionSignUp(ConnectionSignUp connectionSignUp) {
-        this.connectionSignUp = connectionSignUp;
-    }
-
-    /**
-     * Sets a table name prefix. This will be prefixed to all the table names before queries are executed. Defaults to "".
-     * This is can be used to qualify the table name with a schema or to distinguish Spring Social tables from other application tables.
-     * @param tablePrefix the tablePrefix to set
-     */
-    public void setTablePrefix(String tablePrefix) {
-        this.tablePrefix = tablePrefix;
-    }
-
 
     @Override
     public List<String> findUserIdsWithConnection(Connection<?> connection) {
