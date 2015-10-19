@@ -3,8 +3,9 @@
 Intention of this project is to implement the suport for neo4j in spring social. 
 * This is still in a very early stage and is not ready to use.
 
-Add repository
+1. Add repository
 
+`
 <repositories>
     <repository>
         <id>spring-social-neo4j</id>
@@ -14,12 +15,13 @@ Add repository
             <updatePolicy>always</updatePolicy>
         </snapshots>
     </repository>
-</repositories>
+</repositories>`
 
-Add dependency
-
+2. Add dependency
+`
 <dependency>
     <groupId>org.springframework</groupId>
     <artifactId>spring-social-neo4j</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 </dependency>
+`
