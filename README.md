@@ -5,7 +5,7 @@ Intention of this project is to implement the suport for neo4j in spring social.
 
 1. Add repository
 
-`
+```xml
 <repositories>
     <repository>
         <id>spring-social-neo4j</id>
@@ -15,13 +15,15 @@ Intention of this project is to implement the suport for neo4j in spring social.
             <updatePolicy>always</updatePolicy>
         </snapshots>
     </repository>
-</repositories>`
+</repositories>
+```
 
 2. Add dependency
-`
+
+```xml
 <dependency>
     <groupId>org.springframework</groupId>
     <artifactId>spring-social-neo4j</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 </dependency>
-`
+```
