@@ -3,7 +3,7 @@
 Intention of this project is to implement the suport for neo4j in spring social. 
 * This is still in a very early stage and is not ready to use.
 
-1. Add repository
+Add repository
 
 <repositories>
     <repository>
@@ -16,7 +16,7 @@ Intention of this project is to implement the suport for neo4j in spring social.
     </repository>
 </repositories>
 
-2. Add dependency
+Add dependency
 
 <dependency>
     <groupId>org.springframework</groupId>
