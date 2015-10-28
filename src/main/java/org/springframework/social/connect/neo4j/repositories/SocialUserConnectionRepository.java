@@ -1,7 +1,6 @@
 package org.springframework.social.connect.neo4j.repositories;
 
 import org.springframework.data.domain.Sort;
-import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.social.connect.neo4j.domain.SocialUserConnection;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +11,7 @@ import java.util.Set;
  * Created by SWijerathna on 10/7/2015.
  */
 @Repository
-public interface SocialUserConnectionRepository extends GraphRepository<SocialUserConnection> {
+public interface SocialUserConnectionRepository {
 
     List<SocialUserConnection> findByUserId(String userId, Sort sort, int i);
 
@@ -30,4 +29,5 @@ public interface SocialUserConnectionRepository extends GraphRepository<SocialUs
 
     List<SocialUserConnection> findByProviderIdAndProviderUserIdIn(String providerId, Set<String> providerUserIds);
 
+    void save(SocialUserConnection socialUserConnection);
 }

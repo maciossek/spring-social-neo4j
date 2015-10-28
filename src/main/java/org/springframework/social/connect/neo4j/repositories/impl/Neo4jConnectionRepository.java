@@ -1,9 +1,10 @@
-package org.springframework.social.connect.neo4j.repositories;
+package org.springframework.social.connect.neo4j.repositories.impl;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.social.connect.*;
 import org.springframework.social.connect.neo4j.converters.ConnectionConverter;
 import org.springframework.social.connect.neo4j.domain.SocialUserConnection;
+import org.springframework.social.connect.neo4j.repositories.SocialUserConnectionRepository;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 

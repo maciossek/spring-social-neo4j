@@ -1,7 +1,10 @@
-package org.springframework.social.connect.neo4j.repositories;
+package org.springframework.social.connect.neo4j.repositories.impl;
 
+import org.neo4j.ogm.session.Session;
+import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.social.connect.*;
 import org.springframework.social.connect.neo4j.domain.SocialUserConnection;
+import org.springframework.social.connect.neo4j.repositories.SocialUserConnectionRepository;
 
 import java.util.*;
 
@@ -10,17 +13,23 @@ import java.util.*;
  */
 public class Neo4jUserConnectionRepository implements UsersConnectionRepository {
 
-    private SocialUserConnectionRepository repository;
 
     private ConnectionFactoryLocator connectionFactoryLocator;
-
+    private SocialUserConnectionRepository repository;
     private ConnectionSignUp connectionSignUp;
 
 
-    public Neo4jUserConnectionRepository(SocialUserConnectionRepository socialUserConnectionRepository, ConnectionFactoryLocator connectionFactoryLocator) {
+    public Neo4jUserConnectionRepository(String neo4jServerUri, ConnectionFactoryLocator connectionFactoryLocator) {
 
-        this.repository = socialUserConnectionRepository;
         this.connectionFactoryLocator = connectionFactoryLocator;
+        init(neo4jServerUri);
+    }
+
+    public void init(String serverUri){
+
+        SessionFactory sessionFactory = new SessionFactory("org.springframework.social.connect.neo4j.domain");
+        Session session = sessionFactory.openSession(serverUri);
+        repository = new SocialUserConnectionRepositoryImpl(session);
     }
 
     @Override
