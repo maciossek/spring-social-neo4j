@@ -2,7 +2,6 @@ package org.springframework.social.connect.neo4j.repositories.impl;
 
 
 import org.neo4j.ogm.session.Session;
-import org.springframework.data.domain.Sort;
 import org.springframework.social.connect.neo4j.domain.SocialUserConnection;
 import org.springframework.social.connect.neo4j.repositories.SocialUserConnectionRepository;
 
@@ -21,19 +20,19 @@ public class SocialUserConnectionRepositoryImpl implements SocialUserConnectionR
     }
 
     @Override
-    public List<SocialUserConnection> findByUserId(String userId, Sort sort, int i) {
+    public List<SocialUserConnection> findByUserId(String userId, String sort, int i) {
 
 
         return null;
     }
 
     @Override
-    public List<SocialUserConnection> findByUserIdAndProviderId(String userId, String s, Sort sort, int i) {
+    public List<SocialUserConnection> findByUserIdAndProviderId(String userId, String s, String sort, int i) {
         return null;
     }
 
     @Override
-    public List<SocialUserConnection> findByUserIdAndProviderIdAndProviderUserIdIn(String userId, String providerId, List<String> value, Sort sort, int i) {
+    public List<SocialUserConnection> findByUserIdAndProviderIdAndProviderUserIdIn(String userId, String providerId, List<String> value, String sort, int i) {
         return null;
     }
 
