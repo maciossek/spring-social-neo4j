@@ -1,10 +1,10 @@
 package org.springframework.social.connect.neo4j.repositories;
 
+import org.neo4j.ogm.cypher.query.SortOrder;
 import org.springframework.social.connect.neo4j.domain.SocialUserConnection;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by SWijerathna on 10/7/2015.
@@ -12,11 +12,11 @@ import java.util.Set;
 @Repository
 public interface SocialUserConnectionRepository {
 
-    List<SocialUserConnection> findByUserId(String userId, String sort, int i);
+    java.util.Collection<SocialUserConnection> findByUserId(String userId, SortOrder sortOrder);
 
-    List<SocialUserConnection> findByUserIdAndProviderId(String userId, String s, String sort, int i);
+    java.util.Collection<SocialUserConnection> findByUserIdAndProviderId(String userId, String providerId, SortOrder sortOrder);
 
-    List<SocialUserConnection> findByUserIdAndProviderIdAndProviderUserIdIn(String userId, String providerId, List<String> value, String sort, int i);
+    Iterable<SocialUserConnection> findByUserIdAndProviderIdAndProviderUserIdIn(String userId, String providerId, List<String> value, SortOrder sortOrder);
 
     SocialUserConnection findByUserIdAndProviderIdAndProviderUserId(String userId, String providerId, String providerUserId);
 
@@ -24,9 +24,9 @@ public interface SocialUserConnectionRepository {
 
     void deleteByUserIdAndProviderIdAndProviderUserId(String userId, String providerId, String providerUserId);
 
-    List<SocialUserConnection> findByProviderIdAndProviderUserId(String providerId, String providerUserId);
+    java.util.Collection<SocialUserConnection> findByProviderIdAndProviderUserId(String providerId, String providerUserId);
 
-    List<SocialUserConnection> findByProviderIdAndProviderUserIdIn(String providerId, Set<String> providerUserIds);
+    Iterable<SocialUserConnection> findByProviderIdAndProviderUserIdIn(String providerId, List<String> providerUserIds);
 
     void save(SocialUserConnection socialUserConnection);
 }
