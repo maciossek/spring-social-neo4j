@@ -8,4 +8,10 @@
 *.classpath
 *.settings
 *.project
+
+.idea
+*.iml
+
+
 target
+neo4j-home
