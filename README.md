@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/shanika/spring-social-neo4j.svg)](https://travis-ci.org/shanika/spring-social-neo4j)
 
 Intention of this project is to implement the suport for neo4j in spring social. 
-* This is still in a very early stage and is not ready to use.
 
 1. Add repository
     ```xml
