@@ -262,12 +262,12 @@ public class Neo4jUsersConnectionRepositoryTest {
 
         Map<String,Object> params = new HashMap<String, Object>();
         params.put("providerId", "facebook");
-        Result result = databaseServerRule.getGraphDatabaseService().execute("MATCH (n:SocialUserConnection{ providerId : {providerId}}) RETURN n", params);
+        Result result = databaseServerRule.getGraphDatabaseService().execute("MATCH (n:UserConnection{ providerId : {providerId}}) RETURN n", params);
         assertTrue(result.hasNext());
 
         connectionRepository.removeConnections("facebook");
 
-        result = databaseServerRule.getGraphDatabaseService().execute("MATCH (n:SocialUserConnection{ providerId : {providerId}}) RETURN n", params);
+        result = databaseServerRule.getGraphDatabaseService().execute("MATCH (n:UserConnection{ providerId : {providerId}}) RETURN n", params);
         assertFalse(result.hasNext());
     }
 
@@ -283,12 +283,12 @@ public class Neo4jUsersConnectionRepositoryTest {
 
         Map<String,Object> params = new HashMap<String, Object>();
         params.put("providerId", "facebook");
-        Result result = databaseServerRule.getGraphDatabaseService().execute("MATCH (n:SocialUserConnection{ providerId : {providerId}}) RETURN n", params);
+        Result result = databaseServerRule.getGraphDatabaseService().execute("MATCH (n:UserConnection{ providerId : {providerId}}) RETURN n", params);
         assertTrue(result.hasNext());
 
         connectionRepository.removeConnection(new ConnectionKey("facebook", "9"));
 
-        result = databaseServerRule.getGraphDatabaseService().execute("MATCH (n:SocialUserConnection{ providerId : {providerId}}) RETURN n", params);
+        result = databaseServerRule.getGraphDatabaseService().execute("MATCH (n:UserConnection{ providerId : {providerId}}) RETURN n", params);
         assertFalse(result.hasNext());
     }
 
@@ -367,7 +367,7 @@ public class Neo4jUsersConnectionRepositoryTest {
 
     private void insertFacebookConnection2() {
 
-        String query = "CREATE (n:SocialUserConnection{" +
+        String query = "CREATE (n:UserConnection{" +
                 "userId : {userId}," +
                 "providerId : {providerId}, " +
                 "providerUserId : {providerUserId}, " +
@@ -428,7 +428,7 @@ public class Neo4jUsersConnectionRepositoryTest {
 
     private void insertTwitterConnection() {
 
-        String query = "CREATE (n:SocialUserConnection{" +
+        String query = "CREATE (n:UserConnection{" +
                 "userId : {userId}," +
                 "providerId : {providerId}, " +
                 "providerUserId : {providerUserId}, " +
@@ -462,7 +462,7 @@ public class Neo4jUsersConnectionRepositoryTest {
 
     private void insertFacebookConnection3() {
 
-        String query = "CREATE (n:SocialUserConnection{" +
+        String query = "CREATE (n:UserConnection{" +
                 "userId : {userId}," +
                 "providerId : {providerId}, " +
                 "providerUserId : {providerUserId}, " +
@@ -496,7 +496,7 @@ public class Neo4jUsersConnectionRepositoryTest {
 
     private void insertFacebookConnectionSameFacebookUser() {
 
-        String query = "CREATE (n:SocialUserConnection{" +
+        String query = "CREATE (n:UserConnection{" +
                 "userId : {userId}," +
                 "providerId : {providerId}, " +
                 "providerUserId : {providerUserId}, " +
@@ -529,7 +529,7 @@ public class Neo4jUsersConnectionRepositoryTest {
 
     private void insertFacebookConnection() {
 
-        String query = "CREATE (n:SocialUserConnection{" +
+        String query = "CREATE (n:UserConnection{" +
                 "userId : {userId}," +
                 "providerId : {providerId}, " +
                 "providerUserId : {providerUserId}, " +

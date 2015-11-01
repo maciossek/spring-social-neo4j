@@ -4,8 +4,8 @@ import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.social.connect.*;
-import org.springframework.social.connect.neo4j.domain.SocialUserConnection;
-import org.springframework.social.connect.neo4j.repositories.SocialUserConnectionRepository;
+import org.springframework.social.connect.neo4j.domain.UserConnection;
+import org.springframework.social.connect.neo4j.repositories.OgmUserConnectionRepository;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ public class Neo4jUsersConnectionRepository implements UsersConnectionRepository
 
 
     private ConnectionFactoryLocator connectionFactoryLocator;
-    private SocialUserConnectionRepository repository;
+    private OgmUserConnectionRepository repository;
     private ConnectionSignUp connectionSignUp;
     private TextEncryptor textEncryptor;
 
@@ -33,7 +33,7 @@ public class Neo4jUsersConnectionRepository implements UsersConnectionRepository
 
         SessionFactory sessionFactory = new SessionFactory("org.springframework.social.connect.neo4j.domain");
         Session session = sessionFactory.openSession(serverUri);
-        repository = new SocialUserConnectionRepositoryImpl(session);
+        repository = new OgmUserConnectionRepositoryImpl(session);
     }
 
     public void setConnectionSignUp(ConnectionSignUp connectionSignUp) {
@@ -44,7 +44,7 @@ public class Neo4jUsersConnectionRepository implements UsersConnectionRepository
     public List<String> findUserIdsWithConnection(Connection<?> connection) {
         ConnectionKey key = connection.getKey();
 
-        Collection<SocialUserConnection> dbCons = repository.findByProviderIdAndProviderUserId(key.getProviderId(), key.getProviderUserId());
+        Collection<UserConnection> dbCons = repository.findByProviderIdAndProviderUserId(key.getProviderId(), key.getProviderUserId());
 
         if (dbCons.size() == 0 && connectionSignUp != null) {
             String newUserId = connectionSignUp.execute(connection);
@@ -56,7 +56,7 @@ public class Neo4jUsersConnectionRepository implements UsersConnectionRepository
         }
 
         List<String> userIds = new ArrayList<String>();
-        for(SocialUserConnection dbCon: dbCons){
+        for(UserConnection dbCon: dbCons){
             userIds.add(dbCon.userId);
         }
         return userIds;
@@ -68,8 +68,8 @@ public class Neo4jUsersConnectionRepository implements UsersConnectionRepository
         final Set<String> localUserIds = new HashSet<String>();
         List<String> providerUserIdsList = new ArrayList<String>();
         providerUserIdsList.addAll(providerUserIds);
-        Iterable<SocialUserConnection> dbCons = repository.findByProviderIdAndProviderUserIdIn(providerId, providerUserIdsList);
-        for(SocialUserConnection dbCon:dbCons) {
+        Iterable<UserConnection> dbCons = repository.findByProviderIdAndProviderUserIdIn(providerId, providerUserIdsList);
+        for(UserConnection dbCon:dbCons) {
             localUserIds.add(dbCon.userId);
         }
         return localUserIds;

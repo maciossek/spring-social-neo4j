@@ -4,8 +4,8 @@ import org.neo4j.ogm.cypher.query.SortOrder;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.social.connect.*;
 import org.springframework.social.connect.neo4j.converters.ConnectionConverter;
-import org.springframework.social.connect.neo4j.domain.SocialUserConnection;
-import org.springframework.social.connect.neo4j.repositories.SocialUserConnectionRepository;
+import org.springframework.social.connect.neo4j.domain.UserConnection;
+import org.springframework.social.connect.neo4j.repositories.OgmUserConnectionRepository;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -18,13 +18,13 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
 
     private final String userId;
 
-    private final SocialUserConnectionRepository repository;
+    private final OgmUserConnectionRepository repository;
 
     private final ConnectionFactoryLocator connectionFactoryLocator;
 
     private final TextEncryptor textEncryptor;
 
-    public Neo4jConnectionRepository(String userId, SocialUserConnectionRepository socialUserConnectionRepository, ConnectionFactoryLocator connectionFactoryLocator, TextEncryptor textEncryptor) {
+    public Neo4jConnectionRepository(String userId, OgmUserConnectionRepository socialUserConnectionRepository, ConnectionFactoryLocator connectionFactoryLocator, TextEncryptor textEncryptor) {
 
         this.userId = userId;
         this.repository = socialUserConnectionRepository;
@@ -37,7 +37,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
 
         SortOrder sort = new SortOrder().add(SortOrder.Direction.ASC, "providerId").add(SortOrder.Direction.ASC,"rank");
 
-        Collection<SocialUserConnection> dbConnections = repository.findByUserId(userId, sort);
+        Collection<UserConnection> dbConnections = repository.findByUserId(userId, sort);
 
         MultiValueMap<String, Connection<?>> connections = new LinkedMultiValueMap<String, Connection<?>>();
         Set<String> registeredProviderIds = connectionFactoryLocator.registeredProviderIds();
@@ -46,7 +46,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
             connections.put(registeredProviderId, Collections.<Connection<?>>emptyList());
         }
 
-        for(SocialUserConnection dbCon:dbConnections) {
+        for(UserConnection dbCon:dbConnections) {
             ConnectionData conData = ConnectionConverter.toConnectionData(dbCon, textEncryptor);
             ConnectionFactory<?> connectionFactory = connectionFactoryLocator.getConnectionFactory(conData.getProviderId());
             Connection<?> connection = connectionFactory.createConnection(conData);
@@ -65,9 +65,9 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
     public List<Connection<?>> findConnections(String providerId) {
 
         SortOrder sort = new SortOrder().add(SortOrder.Direction.ASC, "rank");
-        Collection<SocialUserConnection> dbConnections = repository.findByUserIdAndProviderId(userId, providerId, sort);
+        Collection<UserConnection> dbConnections = repository.findByUserIdAndProviderId(userId, providerId, sort);
         List<Connection<?>> connections = new ArrayList<Connection<?>>();
-        for (SocialUserConnection dbCon:dbConnections) {
+        for (UserConnection dbCon:dbConnections) {
             ConnectionData conData = ConnectionConverter.toConnectionData(dbCon, textEncryptor);
             ConnectionFactory<?> connectionFactory = connectionFactoryLocator.getConnectionFactory(conData.getProviderId());
             connections.add(connectionFactory.createConnection(conData));
@@ -89,7 +89,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
             throw new IllegalArgumentException("Unable to execute find: no providerUsers provided");
         }
 
-        List<SocialUserConnection> dbConnections = new ArrayList<SocialUserConnection>();
+        List<UserConnection> dbConnections = new ArrayList<UserConnection>();
         for (Iterator<Map.Entry<String, List<String>>> it = providerUsers.entrySet().iterator(); it.hasNext();) {
             Map.Entry<String, List<String>> entry = it.next();
             String providerId = entry.getKey();
@@ -127,7 +127,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
     @Override
     public Connection<?> getConnection(ConnectionKey connectionKey) {
 
-        SocialUserConnection dbCon = repository.findByUserIdAndProviderIdAndProviderUserId(userId, connectionKey.getProviderId(), connectionKey.getProviderUserId());
+        UserConnection dbCon = repository.findByUserIdAndProviderIdAndProviderUserId(userId, connectionKey.getProviderId(), connectionKey.getProviderUserId());
 
         if(dbCon == null) {
             throw new NoSuchConnectionException(connectionKey);
@@ -170,7 +170,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
         Integer rank = 0;
         SortOrder sort = new SortOrder();
         sort.add(SortOrder.Direction.ASC,"rank");
-        Collection<SocialUserConnection> existingCons = repository.findByUserIdAndProviderId(userId, data.getProviderId(), sort);
+        Collection<UserConnection> existingCons = repository.findByUserIdAndProviderId(userId, data.getProviderId(), sort);
         if(existingCons.size()>0) {
             rank = existingCons.iterator().next().rank;
         }
@@ -215,10 +215,10 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
         }
     }
 
-    private List<Connection<?>> getConnectionsListFromDbConnections(Collection<SocialUserConnection> dbConnections) {
+    private List<Connection<?>> getConnectionsListFromDbConnections(Collection<UserConnection> dbConnections) {
 
         List<Connection<?>> connections = new ArrayList<Connection<?>>();
-        for(SocialUserConnection dbCon:dbConnections) {
+        for(UserConnection dbCon:dbConnections) {
             ConnectionData conData = ConnectionConverter.toConnectionData(dbCon, textEncryptor);
             ConnectionFactory<?> connectionFactory = connectionFactoryLocator.getConnectionFactory(conData.getProviderId());
             connections.add(connectionFactory.createConnection(conData));
