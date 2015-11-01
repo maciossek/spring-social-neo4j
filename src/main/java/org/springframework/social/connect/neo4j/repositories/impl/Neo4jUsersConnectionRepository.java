@@ -2,6 +2,7 @@ package org.springframework.social.connect.neo4j.repositories.impl;
 
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.social.connect.*;
 import org.springframework.social.connect.neo4j.domain.SocialUserConnection;
 import org.springframework.social.connect.neo4j.repositories.SocialUserConnectionRepository;
@@ -17,11 +18,14 @@ public class Neo4jUsersConnectionRepository implements UsersConnectionRepository
     private ConnectionFactoryLocator connectionFactoryLocator;
     private SocialUserConnectionRepository repository;
     private ConnectionSignUp connectionSignUp;
+    private TextEncryptor textEncryptor;
 
 
-    public Neo4jUsersConnectionRepository(String neo4jServerUri, ConnectionFactoryLocator connectionFactoryLocator) {
+    public Neo4jUsersConnectionRepository(String neo4jServerUri, ConnectionFactoryLocator connectionFactoryLocator, TextEncryptor textEncryptor) {
 
         this.connectionFactoryLocator = connectionFactoryLocator;
+        this.textEncryptor = textEncryptor;
+
         init(neo4jServerUri);
     }
 
@@ -78,7 +82,7 @@ public class Neo4jUsersConnectionRepository implements UsersConnectionRepository
             throw new IllegalArgumentException("userId cannot be null");
         }
 
-        return new Neo4jConnectionRepository(userId,repository,connectionFactoryLocator);
+        return new Neo4jConnectionRepository(userId, repository, connectionFactoryLocator, textEncryptor);
     }
 
 

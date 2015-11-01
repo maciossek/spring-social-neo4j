@@ -5,8 +5,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.neo4j.graphdb.Result;
-import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.testutil.Neo4jIntegrationTestRule;
+import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.social.connect.*;
 import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 import org.springframework.social.connect.support.OAuth1ConnectionFactory;
@@ -23,12 +23,9 @@ import static org.junit.Assert.*;
 
 public class Neo4jUsersConnectionRepositoryTest {
 
-    public static final String SPRING_SOCIAL_NEO4J_DOMAIN = "org.springframework.social.connect.neo4j.domain";
 
     @Rule
     public Neo4jIntegrationTestRule databaseServerRule = new Neo4jIntegrationTestRule();
-
-    private Session session;
 
     private ConnectionRepository connectionRepository;
 
@@ -45,7 +42,7 @@ public class Neo4jUsersConnectionRepositoryTest {
         connectionFactory = new TestFacebookConnectionFactory();
         connectionFactoryRegistry.addConnectionFactory(connectionFactory);
 
-        usersConnectionRepository = new Neo4jUsersConnectionRepository(databaseServerRule.url(), connectionFactoryRegistry);
+        usersConnectionRepository = new Neo4jUsersConnectionRepository(databaseServerRule.url(), connectionFactoryRegistry, Encryptors.noOpText());
         connectionRepository = usersConnectionRepository.createConnectionRepository("1");
 
     }
