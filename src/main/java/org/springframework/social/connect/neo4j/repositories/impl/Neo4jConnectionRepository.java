@@ -1,6 +1,7 @@
 package org.springframework.social.connect.neo4j.repositories.impl;
 
 import org.neo4j.ogm.cypher.query.SortOrder;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.social.connect.*;
 import org.springframework.social.connect.neo4j.converters.ConnectionConverter;
 import org.springframework.social.connect.neo4j.domain.SocialUserConnection;
@@ -21,11 +22,14 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
 
     private final ConnectionFactoryLocator connectionFactoryLocator;
 
-    public Neo4jConnectionRepository(String userId, SocialUserConnectionRepository socialUserConnectionRepository, ConnectionFactoryLocator connectionFactoryLocator) {
+    private final TextEncryptor textEncryptor;
+
+    public Neo4jConnectionRepository(String userId, SocialUserConnectionRepository socialUserConnectionRepository, ConnectionFactoryLocator connectionFactoryLocator, TextEncryptor textEncryptor) {
 
         this.userId = userId;
         this.repository = socialUserConnectionRepository;
         this.connectionFactoryLocator = connectionFactoryLocator;
+        this.textEncryptor = textEncryptor;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
         }
 
         for(SocialUserConnection dbCon:dbConnections) {
-            ConnectionData conData = ConnectionConverter.toConnectionData(dbCon);
+            ConnectionData conData = ConnectionConverter.toConnectionData(dbCon, textEncryptor);
             ConnectionFactory<?> connectionFactory = connectionFactoryLocator.getConnectionFactory(conData.getProviderId());
             Connection<?> connection = connectionFactory.createConnection(conData);
 
@@ -64,7 +68,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
         Collection<SocialUserConnection> dbConnections = repository.findByUserIdAndProviderId(userId, providerId, sort);
         List<Connection<?>> connections = new ArrayList<Connection<?>>();
         for (SocialUserConnection dbCon:dbConnections) {
-            ConnectionData conData = ConnectionConverter.toConnectionData(dbCon);
+            ConnectionData conData = ConnectionConverter.toConnectionData(dbCon, textEncryptor);
             ConnectionFactory<?> connectionFactory = connectionFactoryLocator.getConnectionFactory(conData.getProviderId());
             connections.add(connectionFactory.createConnection(conData));
         }
@@ -129,7 +133,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
             throw new NoSuchConnectionException(connectionKey);
         }
 
-        ConnectionData conData = ConnectionConverter.toConnectionData(dbCon);
+        ConnectionData conData = ConnectionConverter.toConnectionData(dbCon, textEncryptor);
         ConnectionFactory<?> connectionFactory = connectionFactoryLocator.getConnectionFactory(conData.getProviderId());
         return connectionFactory.createConnection(conData);
     }
@@ -172,7 +176,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
         }
 
         if(repository.findByUserIdAndProviderIdAndProviderUserId(userId, data.getProviderId(), data.getProviderUserId()) == null ) {
-            repository.save(ConnectionConverter.toSocialUserConnection(userId,rank,data));
+            repository.save(ConnectionConverter.toSocialUserConnection(userId, rank, data, textEncryptor));
         }
         else {
             throw new DuplicateConnectionException(connection.getKey());
@@ -184,7 +188,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
     public void updateConnection(Connection<?> connection) {
         ConnectionData data = connection.createData();
         repository.save(ConnectionConverter.toSocialUserConnection(data,
-                repository.findByUserIdAndProviderIdAndProviderUserId(userId,data.getProviderId(),data.getProviderUserId())));
+                repository.findByUserIdAndProviderIdAndProviderUserId(userId,data.getProviderId(),data.getProviderUserId()), textEncryptor));
     }
 
     @Override
@@ -215,7 +219,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
 
         List<Connection<?>> connections = new ArrayList<Connection<?>>();
         for(SocialUserConnection dbCon:dbConnections) {
-            ConnectionData conData = ConnectionConverter.toConnectionData(dbCon);
+            ConnectionData conData = ConnectionConverter.toConnectionData(dbCon, textEncryptor);
             ConnectionFactory<?> connectionFactory = connectionFactoryLocator.getConnectionFactory(conData.getProviderId());
             connections.add(connectionFactory.createConnection(conData));
         }
