@@ -11,7 +11,7 @@ import java.util.*;
 /**
 * Created by SWijerathna on 10/7/2015.
 */
-public class Neo4jUserConnectionRepository implements UsersConnectionRepository {
+public class Neo4jUsersConnectionRepository implements UsersConnectionRepository {
 
 
     private ConnectionFactoryLocator connectionFactoryLocator;
@@ -19,7 +19,7 @@ public class Neo4jUserConnectionRepository implements UsersConnectionRepository 
     private ConnectionSignUp connectionSignUp;
 
 
-    public Neo4jUserConnectionRepository(String neo4jServerUri, ConnectionFactoryLocator connectionFactoryLocator) {
+    public Neo4jUsersConnectionRepository(String neo4jServerUri, ConnectionFactoryLocator connectionFactoryLocator) {
 
         this.connectionFactoryLocator = connectionFactoryLocator;
         init(neo4jServerUri);
