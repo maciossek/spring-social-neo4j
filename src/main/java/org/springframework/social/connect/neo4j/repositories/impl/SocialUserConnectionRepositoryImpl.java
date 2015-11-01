@@ -92,7 +92,9 @@ public class SocialUserConnectionRepositoryImpl implements SocialUserConnectionR
     public void deleteByUserIdAndProviderIdAndProviderUserId(String userId, String providerId, String providerUserId) {
 
         SocialUserConnection cons = findByUserIdAndProviderIdAndProviderUserId(userId, providerId, providerUserId);
-        session.delete(cons);
+        if (cons != null) {
+            session.delete(cons);
+        }
     }
 
     @Override
