@@ -32,6 +32,10 @@ public class Neo4jUsersConnectionRepository implements UsersConnectionRepository
         repository = new SocialUserConnectionRepositoryImpl(session);
     }
 
+    public void setConnectionSignUp(ConnectionSignUp connectionSignUp) {
+        this.connectionSignUp = connectionSignUp;
+    }
+
     @Override
     public List<String> findUserIdsWithConnection(Connection<?> connection) {
         ConnectionKey key = connection.getKey();

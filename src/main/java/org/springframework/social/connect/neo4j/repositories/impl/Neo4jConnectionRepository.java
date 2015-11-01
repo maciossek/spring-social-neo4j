@@ -22,6 +22,7 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
     private final ConnectionFactoryLocator connectionFactoryLocator;
 
     public Neo4jConnectionRepository(String userId, SocialUserConnectionRepository socialUserConnectionRepository, ConnectionFactoryLocator connectionFactoryLocator) {
+
         this.userId = userId;
         this.repository = socialUserConnectionRepository;
         this.connectionFactoryLocator = connectionFactoryLocator;
@@ -170,7 +171,13 @@ public class Neo4jConnectionRepository implements ConnectionRepository{
             rank = existingCons.iterator().next().rank;
         }
 
-        repository.save(ConnectionConverter.toSocialUserConnection(userId,rank,data));
+        if(repository.findByUserIdAndProviderIdAndProviderUserId(userId, data.getProviderId(), data.getProviderUserId()) == null ) {
+            repository.save(ConnectionConverter.toSocialUserConnection(userId,rank,data));
+        }
+        else {
+            throw new DuplicateConnectionException(connection.getKey());
+        }
+
     }
 
     @Override
