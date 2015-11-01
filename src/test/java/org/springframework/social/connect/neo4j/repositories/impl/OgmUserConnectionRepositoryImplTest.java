@@ -8,14 +8,14 @@ import org.neo4j.ogm.cypher.query.SortOrder;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import org.neo4j.ogm.testutil.Neo4jIntegrationTestRule;
-import org.springframework.social.connect.neo4j.domain.SocialUserConnection;
-import org.springframework.social.connect.neo4j.repositories.SocialUserConnectionRepository;
+import org.springframework.social.connect.neo4j.domain.UserConnection;
+import org.springframework.social.connect.neo4j.repositories.OgmUserConnectionRepository;
 
 import java.util.*;
 
 import static org.junit.Assert.*;
 
-public class SocialUserConnectionRepositoryImplTest {
+public class OgmUserConnectionRepositoryImplTest {
 
     public static final String SPRING_SOCIAL_NEO4J_DOMAIN = "org.springframework.social.connect.neo4j.domain";
 
@@ -28,7 +28,7 @@ public class SocialUserConnectionRepositoryImplTest {
     private static final String TEST_PROVIDER_USER_ID_1 = "providerUserId1";
     private static final String TEST_PROVIDER_USER_ID_2 = "providerUserId2";
 
-    SocialUserConnectionRepository socialUserConnectionRepository;
+    OgmUserConnectionRepository socialUserConnectionRepository;
 
     @Rule
     public Neo4jIntegrationTestRule databaseServerRule = new Neo4jIntegrationTestRule();
@@ -40,7 +40,7 @@ public class SocialUserConnectionRepositoryImplTest {
 
         SessionFactory sessionFactory = new SessionFactory(SPRING_SOCIAL_NEO4J_DOMAIN);
         session = sessionFactory.openSession(databaseServerRule.url());
-        socialUserConnectionRepository = new SocialUserConnectionRepositoryImpl(session);
+        socialUserConnectionRepository = new OgmUserConnectionRepositoryImpl(session);
     }
 
     @After
@@ -54,14 +54,14 @@ public class SocialUserConnectionRepositoryImplTest {
 
         setupData();
 
-        Collection<SocialUserConnection> connections = socialUserConnectionRepository.findByUserId(TEST_USER_ID_1, new SortOrder().add("providerId"));
+        Collection<UserConnection> connections = socialUserConnectionRepository.findByUserId(TEST_USER_ID_1, new SortOrder().add("providerId"));
 
         assertEquals(3, connections.size());
-        Iterator<SocialUserConnection> itr = connections.iterator();
+        Iterator<UserConnection> itr = connections.iterator();
 
-        SocialUserConnection con1 = itr.next();
-        SocialUserConnection con2 = itr.next();
-        SocialUserConnection con3 = itr.next();
+        UserConnection con1 = itr.next();
+        UserConnection con2 = itr.next();
+        UserConnection con3 = itr.next();
 
         assertEquals(TEST_USER_ID_1, con1.userId);
         assertEquals(TEST_PROVIDER_ID_1, con1.providerId);
@@ -78,10 +78,10 @@ public class SocialUserConnectionRepositoryImplTest {
 
         setupData();
 
-        Collection<SocialUserConnection> connections = socialUserConnectionRepository.findByUserIdAndProviderId(TEST_USER_ID_1, TEST_PROVIDER_ID_1, new SortOrder().add("providerUserId"));
+        Collection<UserConnection> connections = socialUserConnectionRepository.findByUserIdAndProviderId(TEST_USER_ID_1, TEST_PROVIDER_ID_1, new SortOrder().add("providerUserId"));
 
         assertEquals(2, connections.size());
-        SocialUserConnection con1 = connections.iterator().next();
+        UserConnection con1 = connections.iterator().next();
 
         assertEquals(TEST_USER_ID_1, con1.userId);
         assertEquals(TEST_PROVIDER_ID_1, con1.providerId);
@@ -92,7 +92,7 @@ public class SocialUserConnectionRepositoryImplTest {
 
         setupData();
 
-        Iterable<SocialUserConnection> connections = socialUserConnectionRepository
+        Iterable<UserConnection> connections = socialUserConnectionRepository
                 .findByUserIdAndProviderIdAndProviderUserIdIn(TEST_USER_ID_1, TEST_PROVIDER_ID_1,
                         new ArrayList<String>(Arrays.asList(TEST_PROVIDER_USER_ID_1)),
                         new SortOrder().add("providerUserId"));
@@ -100,7 +100,7 @@ public class SocialUserConnectionRepositoryImplTest {
 
         assertTrue(connections.iterator().hasNext());
 
-        SocialUserConnection con1 = connections.iterator().next();
+        UserConnection con1 = connections.iterator().next();
 
         assertEquals(TEST_USER_ID_1, con1.userId);
         assertEquals(TEST_PROVIDER_ID_1, con1.providerId);
@@ -112,7 +112,7 @@ public class SocialUserConnectionRepositoryImplTest {
 
         setupData();
 
-        SocialUserConnection connection = socialUserConnectionRepository
+        UserConnection connection = socialUserConnectionRepository
                 .findByUserIdAndProviderIdAndProviderUserId(TEST_USER_ID_1, TEST_PROVIDER_ID_1,
                         TEST_PROVIDER_USER_ID_1);
 
@@ -140,7 +140,7 @@ public class SocialUserConnectionRepositoryImplTest {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put( "userId", TEST_USER_ID_1 );
         params.put( "providerId", TEST_PROVIDER_ID_1 );
-        Iterable<SocialUserConnection> conns = session.query(SocialUserConnection.class, query, params);
+        Iterable<UserConnection> conns = session.query(UserConnection.class, query, params);
 
         assertFalse(conns.iterator().hasNext());
     }
@@ -161,7 +161,7 @@ public class SocialUserConnectionRepositoryImplTest {
         params.put( "providerId", TEST_PROVIDER_ID_1 );
         params.put( "providerUserId", TEST_PROVIDER_USER_ID_1);
 
-        Iterable<SocialUserConnection> conns = session.query(SocialUserConnection.class, query, params);
+        Iterable<UserConnection> conns = session.query(UserConnection.class, query, params);
 
         assertFalse(conns.iterator().hasNext());
     }
@@ -171,10 +171,10 @@ public class SocialUserConnectionRepositoryImplTest {
 
         setupData();
 
-        Collection<SocialUserConnection> connections = socialUserConnectionRepository.findByProviderIdAndProviderUserId(TEST_PROVIDER_ID_1, TEST_PROVIDER_USER_ID_1);
+        Collection<UserConnection> connections = socialUserConnectionRepository.findByProviderIdAndProviderUserId(TEST_PROVIDER_ID_1, TEST_PROVIDER_USER_ID_1);
 
         assertEquals(2, connections.size());
-        SocialUserConnection con1 = connections.iterator().next();
+        UserConnection con1 = connections.iterator().next();
 
         assertEquals(TEST_PROVIDER_ID_1, con1.providerId);
         assertEquals(TEST_PROVIDER_USER_ID_1, con1.providerUserId);
@@ -186,14 +186,14 @@ public class SocialUserConnectionRepositoryImplTest {
 
         setupData();
 
-        Iterable<SocialUserConnection> connections = socialUserConnectionRepository
+        Iterable<UserConnection> connections = socialUserConnectionRepository
                 .findByProviderIdAndProviderUserIdIn( TEST_PROVIDER_ID_1,
                         new ArrayList<String>(Arrays.asList(TEST_PROVIDER_USER_ID_1)));
 
 
         assertTrue(connections.iterator().hasNext());
 
-        SocialUserConnection con1 = connections.iterator().next();
+        UserConnection con1 = connections.iterator().next();
 
         assertEquals(TEST_PROVIDER_ID_1, con1.providerId);
         assertEquals(TEST_PROVIDER_USER_ID_1, con1.providerUserId);
@@ -204,11 +204,11 @@ public class SocialUserConnectionRepositoryImplTest {
 
         socialUserConnectionRepository.save(getSampleUserConnection(TEST_USER_ID_1, TEST_PROVIDER_ID_1, TEST_PROVIDER_USER_ID_1));
 
-        Collection<SocialUserConnection> savedUserCons = session.loadAll(SocialUserConnection.class);
+        Collection<UserConnection> savedUserCons = session.loadAll(UserConnection.class);
 
         assertEquals(1, savedUserCons.size());
 
-        SocialUserConnection savedUserCon = savedUserCons.iterator().next();
+        UserConnection savedUserCon = savedUserCons.iterator().next();
         assertNotNull(savedUserCon.id);
         assertEquals(TEST_USER_ID_1, savedUserCon.userId);
     }
@@ -221,9 +221,9 @@ public class SocialUserConnectionRepositoryImplTest {
         session.save(getSampleUserConnection(TEST_USER_ID_2,TEST_PROVIDER_ID_1, TEST_PROVIDER_USER_ID_1));
     }
 
-    private SocialUserConnection getSampleUserConnection(String userId, String providerId, String providerUserId) {
+    private UserConnection getSampleUserConnection(String userId, String providerId, String providerUserId) {
 
-        SocialUserConnection userConnection = new SocialUserConnection();
+        UserConnection userConnection = new UserConnection();
         userConnection.userId = userId;
         userConnection.providerId = providerId;
         userConnection.providerUserId = providerUserId;

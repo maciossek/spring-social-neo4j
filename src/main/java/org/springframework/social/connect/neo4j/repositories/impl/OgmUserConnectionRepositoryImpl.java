@@ -6,30 +6,30 @@ import org.neo4j.ogm.cypher.Filter;
 import org.neo4j.ogm.cypher.Filters;
 import org.neo4j.ogm.cypher.query.SortOrder;
 import org.neo4j.ogm.session.Session;
-import org.springframework.social.connect.neo4j.domain.SocialUserConnection;
-import org.springframework.social.connect.neo4j.repositories.SocialUserConnectionRepository;
+import org.springframework.social.connect.neo4j.domain.UserConnection;
+import org.springframework.social.connect.neo4j.repositories.OgmUserConnectionRepository;
 
 import java.util.*;
 
 /**
  * Created by SWijerathna on 10/28/2015.
  */
-public class SocialUserConnectionRepositoryImpl implements SocialUserConnectionRepository {
+public class OgmUserConnectionRepositoryImpl implements OgmUserConnectionRepository {
 
     Session session;
 
-    public SocialUserConnectionRepositoryImpl(Session session) {
+    public OgmUserConnectionRepositoryImpl(Session session) {
         this.session = session;
     }
 
     @Override
-    public Collection<SocialUserConnection> findByUserId(String userId, SortOrder sortOrder) {
+    public Collection<UserConnection> findByUserId(String userId, SortOrder sortOrder) {
 
-        return session.loadAll(SocialUserConnection.class, new Filter("userId", userId), sortOrder);
+        return session.loadAll(UserConnection.class, new Filter("userId", userId), sortOrder);
     }
 
     @Override
-    public Collection<SocialUserConnection> findByUserIdAndProviderId(String userId, String providerId, SortOrder sortOrder) {
+    public Collection<UserConnection> findByUserIdAndProviderId(String userId, String providerId, SortOrder sortOrder) {
 
         Filters filters = new Filters();
         Filter f1 = new Filter("userId", userId);
@@ -37,13 +37,13 @@ public class SocialUserConnectionRepositoryImpl implements SocialUserConnectionR
         f2.setBooleanOperator(BooleanOperator.AND);
         filters.add(f1, f2);
 
-        return session.loadAll(SocialUserConnection.class, filters, sortOrder);
+        return session.loadAll(UserConnection.class, filters, sortOrder);
     }
 
     @Override
-    public Iterable<SocialUserConnection> findByUserIdAndProviderIdAndProviderUserIdIn(String userId, String providerId, List<String> value, SortOrder sortOrder) {
+    public Iterable<UserConnection> findByUserIdAndProviderIdAndProviderUserIdIn(String userId, String providerId, List<String> value, SortOrder sortOrder) {
 
-        String query = "MATCH (n:SocialUserConnection) " +
+        String query = "MATCH (n:UserConnection) " +
                         "WHERE n.userId = {userId} " +
                         "AND n.providerId = {providerId}" +
                         "AND n.providerUserId IN {providerUserIds} " +
@@ -54,11 +54,11 @@ public class SocialUserConnectionRepositoryImpl implements SocialUserConnectionR
         params.put( "providerId", providerId );
         params.put( "providerUserIds", value.toArray() );
 
-        return session.query(SocialUserConnection.class, query, params);
+        return session.query(UserConnection.class, query, params);
     }
 
     @Override
-    public SocialUserConnection findByUserIdAndProviderIdAndProviderUserId(String userId, String providerId, String providerUserId) {
+    public UserConnection findByUserIdAndProviderIdAndProviderUserId(String userId, String providerId, String providerUserId) {
 
         Filters filters = new Filters();
         Filter f1 = new Filter("userId", userId);
@@ -68,7 +68,7 @@ public class SocialUserConnectionRepositoryImpl implements SocialUserConnectionR
         f3.setBooleanOperator(BooleanOperator.AND);
         filters.add(f1, f2, f3);
 
-        Collection<SocialUserConnection> connections = session.loadAll(SocialUserConnection.class, filters);
+        Collection<UserConnection> connections = session.loadAll(UserConnection.class, filters);
 
         if(connections.size() > 0) {
             return connections.iterator().next();
@@ -80,8 +80,8 @@ public class SocialUserConnectionRepositoryImpl implements SocialUserConnectionR
     @Override
     public void deleteByUserIdAndProviderId(String userId, String providerId) {
 
-        Collection<SocialUserConnection> cons = findByUserIdAndProviderId(userId, providerId, new SortOrder());
-        Iterator<SocialUserConnection> itr = cons.iterator();
+        Collection<UserConnection> cons = findByUserIdAndProviderId(userId, providerId, new SortOrder());
+        Iterator<UserConnection> itr = cons.iterator();
 
         while(itr.hasNext()) {
             session.delete(itr.next());
@@ -91,14 +91,14 @@ public class SocialUserConnectionRepositoryImpl implements SocialUserConnectionR
     @Override
     public void deleteByUserIdAndProviderIdAndProviderUserId(String userId, String providerId, String providerUserId) {
 
-        SocialUserConnection cons = findByUserIdAndProviderIdAndProviderUserId(userId, providerId, providerUserId);
+        UserConnection cons = findByUserIdAndProviderIdAndProviderUserId(userId, providerId, providerUserId);
         if (cons != null) {
             session.delete(cons);
         }
     }
 
     @Override
-    public Collection<SocialUserConnection> findByProviderIdAndProviderUserId(String providerId, String providerUserId) {
+    public Collection<UserConnection> findByProviderIdAndProviderUserId(String providerId, String providerUserId) {
 
         Filters filters = new Filters();
         Filter f1 = new Filter("providerId", providerId);
@@ -106,13 +106,13 @@ public class SocialUserConnectionRepositoryImpl implements SocialUserConnectionR
         f2.setBooleanOperator(BooleanOperator.AND);
         filters.add(f1, f2);
 
-        return session.loadAll(SocialUserConnection.class, filters, new SortOrder());
+        return session.loadAll(UserConnection.class, filters, new SortOrder());
     }
 
     @Override
-    public Iterable<SocialUserConnection> findByProviderIdAndProviderUserIdIn(String providerId, List<String> providerUserIds) {
+    public Iterable<UserConnection> findByProviderIdAndProviderUserIdIn(String providerId, List<String> providerUserIds) {
 
-        String query = "MATCH (n:SocialUserConnection) " +
+        String query = "MATCH (n:UserConnection) " +
                 "WHERE n.providerId = {providerId}" +
                 "AND n.providerUserId IN {providerUserIds} " +
                 "RETURN n;";
@@ -121,11 +121,11 @@ public class SocialUserConnectionRepositoryImpl implements SocialUserConnectionR
         params.put( "providerId", providerId );
         params.put( "providerUserIds", providerUserIds.toArray() );
 
-        return session.query(SocialUserConnection.class, query, params);
+        return session.query(UserConnection.class, query, params);
     }
 
     @Override
-    public void save(SocialUserConnection socialUserConnection) {
-        session.save(socialUserConnection);
+    public void save(UserConnection userConnection) {
+        session.save(userConnection);
     }
 }

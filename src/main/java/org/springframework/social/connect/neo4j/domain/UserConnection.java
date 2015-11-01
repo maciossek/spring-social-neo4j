@@ -7,7 +7,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
  * Created by SWijerathna on 10/7/2015.
  */
 @NodeEntity
-public class SocialUserConnection {
+public class UserConnection {
 
     @GraphId
     public Long id;
@@ -34,21 +34,21 @@ public class SocialUserConnection {
 
     public Long expireTime;
 
-    public SocialUserConnection() {
+    public UserConnection() {
 
     }
 
-    public SocialUserConnection(String userId,
-                                String providerId,
-                                String providerUserId,
-                                int rank,
-                                String displayName,
-                                String profileUrl,
-                                String imageUrl,
-                                String accessToken,
-                                String secret,
-                                String refreshToken,
-                                Long expireTime) {
+    public UserConnection(String userId,
+                          String providerId,
+                          String providerUserId,
+                          int rank,
+                          String displayName,
+                          String profileUrl,
+                          String imageUrl,
+                          String accessToken,
+                          String secret,
+                          String refreshToken,
+                          Long expireTime) {
         this.userId = userId;
         this.providerId = providerId;
         this.providerUserId = providerUserId;
@@ -62,7 +62,7 @@ public class SocialUserConnection {
         this.expireTime = expireTime;
     }
 
-    public SocialUserConnection update(String providerId,
+    public UserConnection update(String providerId,
                                        String providerUserId,
                                        String displayName,
                                        String profileUrl,
