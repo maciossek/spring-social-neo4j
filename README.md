@@ -26,4 +26,23 @@ Intention of this project is to implement the suport for neo4j in spring social.
         <artifactId>spring-social-neo4j</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </dependency>
+    ```    
+
+3. Configure UsersConnectionRepository in spring social config
+    
+    ```java
+    
+    @Autowired
+    private Neo4jServer server;
+    
+    @Override
+    public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
+
+        return new Neo4jUsersConnectionRepository(server.url(), connectionFactoryLocator, Encryptors.noOpText());
+    }
+    
     ```
+    
+
+
+    
