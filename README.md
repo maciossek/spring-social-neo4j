@@ -1,8 +1,9 @@
 # spring-social-neo4j
+Spring Social UsersConnectionRepository/ConnectionRepository implementation for Neo4j.
 
 [![Build Status](https://travis-ci.org/shanika/spring-social-neo4j.svg)](https://travis-ci.org/shanika/spring-social-neo4j)
 
-Intention of this project is to implement the suport for neo4j in spring social. 
+Using this library you can easily configure Spring Social for an application that use Neo4j as the database server. 
 
 1. Add repository
     ```xml
