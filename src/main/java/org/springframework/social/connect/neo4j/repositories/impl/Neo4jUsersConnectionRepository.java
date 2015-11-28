@@ -28,6 +28,11 @@ public class Neo4jUsersConnectionRepository implements UsersConnectionRepository
 
         init(neo4jServerUri);
     }
+    public Neo4jUsersConnectionRepository(Session session, ConnectionFactoryLocator connectionFactoryLocator, TextEncryptor textEncryptor) {
+        this.connectionFactoryLocator = connectionFactoryLocator;
+        this.textEncryptor = textEncryptor;
+        this.repository = new OgmUserConnectionRepositoryImpl(session);
+    }
 
     public void init(String serverUri){
 
